@@ -1,0 +1,285 @@
+# source("D:/PhD/General/Rawdata2snps/BAM_microsats_genotyping.inR.txt")
+# Expects as input the file 'mymicrosat.scores.all_loci.txt', generated with the 'BAM_microsats_getscores.sh' script.
+
+runall<-function()
+	{
+	# export structure file:
+	score2genotype()
+	#
+	# generate barplot for each locus:
+	multimicrosatscores()
+	microsatoverall(export="pdf")
+	#
+	# load structure file:
+	source("D:/PhD/General/SAMBAR/SAMBAR_v1.05.txt")
+	importmultidata(structurefile="mymicrosats.stru",colourvector=NULL,onerow=FALSE,popfile="Brown135_popfile.txt",nloc=29,silent=TRUE)
+	#
+	# pca analyses:
+	mymat 	<- tab(mygenind,freq=TRUE,NA.method="mean")
+	mypca 	<- dudi.pca(mymat,center=TRUE,scale=FALSE,nf=2,scannf=FALSE)
+	mypops	<- unique(pop(mygenind))
+	s.class(mypca$li,fac=pop(mygenind),col=funky(length(mypops)))
+	#
+	# no polar, no black:
+	subgenind	<- mygenind[inds$pop!="polar"&inds$pop!="Black",]
+	mymat 		<- tab(subgenind,freq=TRUE,NA.method="mean")
+	mypca 		<- dudi.pca(mymat,center=TRUE,scale=FALSE,nf=2,scannf=FALSE)
+	mypops		<- unique(pop(subgenind))
+	s.class(mypca$li,fac=pop(subgenind),col=funky(length(mypops)))
+	}
+
+# script to create structure file:
+# assumes that BAM_microsats_getscores.sh considered at maximum 40 repeats per locus.
+score2genotype<-function(myfile="mymicrosat.scores.all_loci.txt")
+	{
+	x				<- read.table(myfile,header=TRUE)
+	locnames		<- unique(as.character(x$locus))
+	indnames		<- colnames(x[3:ncol(x)])
+	nloc			<- length(locnames)
+	nind			<- length(indnames)
+	#
+	mydf			<- as.data.frame(matrix(NA,nrow=2*nind,ncol=nloc))
+	hedf			<- as.data.frame(matrix(NA,nrow=nind,ncol=nloc))
+	colnames(mydf)	<- locnames
+	colnames(hedf)	<- locnames
+	temp1			<- paste(indnames,1,sep="_")
+	temp2			<- paste(indnames,2,sep="_")
+	temp3			<- c(rbind(temp1,temp2))
+	rownames(mydf)	<- temp3
+	rownames(hedf)	<- indnames
+	#
+	depthdf			<- hedf		# total depth, including genotypes with less than 3 hits
+	depth3df		<- hedf		# total depth, excluding genotypes with less than 3 hits
+	for(j in c(1:nind))
+		{
+		myind		<- indnames[j]
+		cat(myind,sep="\n")
+		for(k in c(1:nloc))
+			{
+			m					<- data.frame("length"=c(1:40),"count"=x[c((k*40-39):(k*40)),j+2])
+			m					<- m[order(m$count,decreasing=TRUE),]
+			depthdf[j,k]		<- sum(as.numeric(m$count),na.rm=TRUE)
+			m$count[m$count<3]	<- NA
+			depth3df[j,k]		<- sum(as.numeric(m$count),na.rm=TRUE)
+			noptions			<- nrow(m[!is.na(m$count),])
+			if(noptions==0)
+				{
+				# in case no allele with at least 3 hits, we score the genotype as missing:
+				mydf[j*2-1,k]	<- -9
+				mydf[j*2,k]		<- -9
+				}
+			if(noptions==1)
+				{
+				# in case one allele: homozygous
+				mydf[j*2-1,k]	<- m$length[1]
+				mydf[j*2,k]		<- m$length[1]
+				}
+			if(noptions==2)
+				{
+				# in case two alleles: heterozygous
+				mylengths		<- m$length[1:2]
+				mylengths		<- mylengths[order(mylengths)]
+				mydf[j*2-1,k]	<- mylengths[1]
+				mydf[j*2,k]		<- mylengths[2]
+				}
+			if(noptions>2)
+				{
+				# in case more than two possible alleles, we have to make decision:
+				myunique		<- unique(m$count[!is.na(m$count)])
+				nunique			<- length(myunique)
+				if(nunique>2)
+					{
+					# if all alleles are supported by different counts, we simply select the alleles with the top two counts:
+					mylengths		<- m$length[1:2]
+					mylengths		<- mylengths[order(mylengths)]
+					mydf[j*2-1,k]	<- mylengths[1]
+					mydf[j*2,k]		<- mylengths[2]
+					}
+				if(nunique==2)
+					{
+					# in case multiple alleles have the same count, we have to make a decision
+					if(m$count[1]==m$count[2]&&m$count[1]!=m$count[3])
+						{
+						# if two top alleles with same count, we select both:
+						mylengths		<- m$length[1:2]
+						mylengths		<- mylengths[order(mylengths)]
+						mydf[j*2-1,k]	<- mylengths[1]
+						mydf[j*2,k]		<- mylengths[2]
+						}else{
+						if(m$count[2]!=m$count[1]&&m$count[2]==m$count[3])
+							{
+							# if second and third place alleles have the same count, we ignore them, and score homozygous for the first allele:
+							mydf[j*2-1,k]	<- m$length[1]
+							mydf[j*2,k]		<- m$length[1]
+							}
+						}
+					}	
+				if(nunique==1)
+					{
+					# if three or more alleles with same top count, then we score locus as missing (because which allele to believe?):
+					mydf[j*2-1,k]	<- -9
+					mydf[j*2,k]		<- -9
+					}
+				}
+			# heterozygous or homozygous?
+			hedf[j,k]	<- ifelse(mydf[j*2-1,k]!=mydf[j*2,k],1,ifelse(mydf[j*2,k]==(-9),NA,0))
+			}
+		}
+	scoresdf<<- x
+	msdf	<<- mydf
+	#
+	hedf	<- hedf[order(rownames(hedf)),]
+	mshedf	<<- hedf
+	depthdf	<<- depthdf
+	depth3df<<- depth3df
+	write.table(mydf,"mymicrosats.stru",sep="\t",quote=FALSE,row.names=TRUE,col.names=TRUE)
+	cat("Genotypes have been stored in dataframe 'msdf' and exported to the file 'mymicrosats.stru' (structure format, two rows per individual).",sep="\n")
+	getmsdepth()
+	}
+	
+getmsdepth<-function()
+	{
+	mydf	<- t(depthdf)
+	mydf[mydf==0]<-NA
+	#
+	pdf(width=ncol(mydf)*0.1+2,height=7,"Microsat.depth.pdf")
+	par(cex.axis=0.5)
+	boxplot(mydf,las=2,log="y",ylab="Depth per locus")
+	dev.off()
+	}
+
+# included in score2genotype
+# if run as stand-alone, expects to find dataframe 'msdf' generated by score2genotype function
+get_mshe<-function(mydf=msdf)
+	{
+	nind			<- nrow(mydf)/2
+	nloc			<- ncol(mydf)
+	hedf			<- as.data.frame(matrix(NA,nrow=nind,ncol=nloc))
+	colnames(hedf)	<- colnames(mydf)
+	indnames		<- rownames(mydf)[seq(2,nrow(mydf),2)]
+	rownames(hedf)	<- sub("_2.*", "",indnames)
+	for(j in c(1:nind))
+		{
+		myind		<- rownames(hedf)[j]
+		cat(myind,sep="\n")
+		for(k in c(1:nloc))
+			{
+			hedf[j,k]	<- ifelse(mydf[j*2-1,k]!=mydf[j*2,k],1,ifelse(mydf[j*2,k]==(-9),NA,0))
+			}
+		}
+	hedf		<- hedf[order(rownames(hedf)),]
+	mshedf		<<- hedf
+	}
+
+
+# generate barplot for each locus:
+# depends on function microsatscores
+multimicrosatscores<-function(exporttype="pdf",my_file="mymicrosat.scores.all_loci.txt",nloci=20,x_min=4,x_max=16,do_silent=TRUE,use_popcol=FALSE)
+	{
+	x		<- read.table(my_file,header=TRUE)
+	myloci	<- as.character(unique(x$locus))
+	if(is.null(nloci))
+		{
+		nloci	<- length(myloci)
+		}
+	if(nloci>100)
+		{
+		return(cat("ERROR: more than 100 loci. Too many to plot.",sep="\n"))
+		}
+	for(k in c(1:nloci))
+		{
+		cat(myloci[k],sep="\n")
+		microsatscores(export=exporttype,mylocus=myloci[k],xmin=x_min,xmax=x_max,myfile=my_file,silent=do_silent,usepopcol=use_popcol)
+		}
+	}
+
+microsatscores<-function(myfile="mymicrosat.scores.all_loci.txt",export=NULL,usepopcol=FALSE,plotname="Microsat_scores",ylabel="Number of occurrences",xlabel="Number of repeats",mylocus="UarD0018",xmin=8,xmax=24,ymin=0,ymax=10,nrcol=16,nrrow=8,silent=TRUE)
+	{
+	x	<- read.table(myfile,header=TRUE)
+	graphics.off()
+	if(!is.null(export))
+		{
+		plotname	<- paste(plotname,mylocus,sep=".")
+		if(export=="eps"){postscript(paste(plotname,"eps",sep="."),width=34,height=22)}
+		if(export=="pdf"){pdf(paste(plotname,"pdf",sep="."),width=34,height=22)}
+		if(export=="png"){png(paste(plotname,"png",sep="."),width=3400,height=2200)}
+		if(export=="wmf"){win.metafile(paste(plotname,"wmf",sep="."),width=34,height=22)}
+		}
+	indnames	<- colnames(x[3:ncol(x)])
+	nrinds		<- length(indnames)
+	nplots		<- nrcol*nrrow
+	nbins		<- (xmax-xmin)+1
+	layout(matrix(c(1:nplots),nrow=nrrow,ncol=nrcol,byrow = FALSE))
+	par(mar=c(1.5,1.5,1,0.5),oma=c(5,6.5,4,1),cex.axis=0.75,cex.lab=2.5,cex.main=2.5)
+	for (j in c(1:nplots))
+		{
+		if(usepopcol)
+			{
+			myind	<- indnames[j]
+			indcol	<- inds$popcol[inds$name==myind]
+			}else{
+			indcol	<- "steelblue3"
+			}
+		if(!silent){cat(j,sep="\n")}
+		if(j<=nrinds)
+			{
+			locusmat				<- x[as.character(x$locus)==mylocus,c(3:nrinds+2)]
+			locusmat				<- locusmat[xmin:xmax,]
+			locusmat[locusmat<3]	<- NA
+			myyaxt					<- ifelse(j<=nrrow,'s','n')
+			if(all(is.na(locusmat[,j])))
+				{
+				if(!silent){cat("Only NA-values.",sep="\n")}
+				barplot(rep(0,nbins),names=c(xmin:xmax),las=2,xlab="",yaxt=myyaxt,ylab="",ylim=c(ymin,ymax),col=indcol,border=indcol)
+				}else{
+				#myyaxt				<- ifelse((j+(nrcol-1))%%nrcol==0,'s','n')
+				#barplot(locusmat[,j],names=c(xmin:xmax),las=2,xlab="",yaxt=myyaxt,ylab="",ylim=c(ymin,ymax))
+				if(!silent){cat("Genotype data with sufficient depth present.",sep="\n")}
+				ADvec				<- as.numeric(locusmat[,j])
+				barplot(ADvec,names=c(xmin:xmax),las=2,xlab="",yaxt=myyaxt,ylab="",ylim=c(ymin,ymax),col=indcol,border=indcol)
+				}
+			mtext(side=3,indnames[j],line=-3,cex=1.5)
+			}
+		}
+	mtext(text=mylocus,cex=3,side=3,line=0.5,outer=TRUE)
+	mtext(text=ylabel,cex=3,side=2,line=2.25,outer=TRUE)
+	mtext(text=xlabel,cex=3,side=1,line=2.75,outer=TRUE)
+	if(!is.null(export)){dev.off()}
+	}
+
+# generate barplot with overall counts per locus:
+microsatoverall<-function(export=NULL,plotname="Microsat_overall",ylabel="Number of occurrences",xlabel="Number of repeats",xmin=8,xmax=24,nrcol=6,nrrow=5)
+	{
+	x		<- read.table("mymicrosat.scores.all_loci.txt",header=TRUE)
+	myloci	<- as.character(unique(x$locus))
+	nrloci	<- length(myloci)
+	#
+	graphics.off()
+	if(!is.null(export))
+		{
+		plotname	<- plotname
+		if(export=="eps"){postscript(paste(plotname,"eps",sep="."),width=30,height=22)}
+		if(export=="pdf"){pdf(paste(plotname,"pdf",sep="."),width=30,height=22)}
+		if(export=="png"){png(paste(plotname,"png",sep="."),width=3000,height=2200)}
+		if(export=="wmf"){win.metafile(paste(plotname,"wmf",sep="."),width=30,height=22)}
+		}
+	indnames	<- colnames(x[3:ncol(x)])
+	nplots		<- nrcol*nrrow
+	layout(matrix(c(1:nplots),nrow=nrrow,ncol=nrcol,byrow = FALSE))
+	par(mar=c(1.5,1.5,1,0.5),oma=c(5,6.5,4,1),cex.axis=0.75,cex.lab=2.5,cex.main=2.5)
+	for (j in c(1:nplots))
+		{
+		if(j<=nrloci)
+			{
+			locusmat	<- x[as.character(x$locus)==myloci[j],c(3:125)]
+			locusmat	<- locusmat[xmin:xmax,]
+			locusmat[locusmat<3]	<- NA
+			myyaxt		<- ifelse(j<=nrrow,'s','n')
+			barplot(rowSums(locusmat,na.rm=TRUE),names=c(xmin:xmax),las=2,xlab="",yaxt=myyaxt,ylab="",col="steelblue3",border="steelblue3")
+			mtext(side=3,myloci[j],line=-3,cex=1.5)
+			}
+		}
+	mtext(text=ylabel,cex=3,side=2,line=2.25,outer=TRUE)
+	mtext(text=xlabel,cex=3,side=1,line=2.75,outer=TRUE)
+	if(!is.null(export)){dev.off()}
+	}
