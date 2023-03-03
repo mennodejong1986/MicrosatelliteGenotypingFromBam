@@ -25,6 +25,9 @@ Microsatellites in a reference genome can be detected using the software TRFfind
 
 Add -h flag to surpress output files we do not need.
 
+![alt text](https://github.com/mennodejong1986/MicrosatelliteGenotypingFromBam/blob/main/Microsatellite_genotyping_step3.png)
+***Figure 1. Microsatellite scoring.*** *Reads with microsatellites*
+
 
 
 
