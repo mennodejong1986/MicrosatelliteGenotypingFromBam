@@ -17,7 +17,7 @@ The procedure to produce a microsatellite data set from bam-files involves compu
 3. allele scoring: count the number of reads supporting each allele  
 4. genotype calling: convert count data into genotypes using a decision tree
 
-## Microsatelloci loci detection
+## Step 1. Microsatelloci loci detection
 
 Microsatellites in a reference genome can be detected using the software TRFfinder.
 
@@ -25,9 +25,16 @@ Microsatellites in a reference genome can be detected using the software TRFfind
 
 Add -h flag to surpress output files we do not need.
 
+## Step 2. Downsize the bam files 
+
+## Step 3. Allele scoring
+
 ![alt text](https://github.com/mennodejong1986/MicrosatelliteGenotypingFromBam/blob/main/Microsatellite_genotyping_step3.png)
 ***Figure 1. Microsatellite scoring.*** *Reads with microsatellites*
 
+## Step 4. Genotype calling
+
+![alt text](https://github.com/mennodejong1986/MicrosatelliteGenotypingFromBam/blob/main/Microsatellite_genotyping_step4.png)
 
 
 
