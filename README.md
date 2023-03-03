@@ -1,5 +1,4 @@
 # MicrosatelliteGenotypingFromBam
-Pipeline to extract microsatellite genotype data from short read sequencing data.
 
 With the advent of next generation sequencing, SNPs (single nucleotide polymorphisms) have replaced microsatellites as the mainstream genetic marker. These SNP data sets are typically generated in a three step procedure:
 1. fastq to bam:  mapping short read sequences (100-150bp length) against a reference genome
