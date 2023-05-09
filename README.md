@@ -12,6 +12,7 @@ However, instead of extracting SNP data from the information stored in bam-files
 The pipeline presented here extracts microsatellite data from an input file of bam-files. The prerequisite is that the short read data has been mapped against a reference genome which has not been masked for repetitive genomes. Furthermore, the sequencing data should at least be 10x (preferably higher), and the read lengths preferably not shorter than 150 bp.
 
 The procedure to produce a microsatellite data set from bam-files involves computer work only (not wet lab stuff), and consists of the following four steps:
+
 0. microsatellite loci selection: detect and select a set of microsatellite loci in a reference genome
 1. microsatellite data extraction: extract the selected microsatellite loci from all individual genomes
 2. allele scoring: count for each microsatellite locus the number of reads supporting each allele  
