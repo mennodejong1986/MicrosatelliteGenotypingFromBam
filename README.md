@@ -22,11 +22,11 @@ Albeit entirely computer-based, in a way each step of this pipeline resembles st
 
 Microsatellites in a reference genome can be detected using the software TRFfinder, by running the command:
 
-./trf409.linux64 mygenome.fa -h
+./trf409.linux64 mygenome.fa 2 7 7 80 10 50 6 -d -h &
 
-Add -h flag to surpress output files we do not need.
+The -h flag is needed to surpress output files we do not need.
 
-The 'BAM_microsats_select.sh' script subsequently selects loci which the desired repeat length. 
+The output file will be named 'mygenome.fa.2.7.7.80.10.50.6.dat.' To select microsatellites tetranucleotide microsatellites with a repeat length of 7 to 9 units, and to store the information for these loci in BED-format, run the script 'FASTA_findmicrosats_TRFoutput2BED.sh'. (You may want to edit the script if you want to select loci with different period and/or repeat lengths.) 
 
 ## Step 2. Extract selected microsatellites from genomes 
 
