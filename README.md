@@ -46,7 +46,7 @@ The script will generate new bam-files with the same prefix as the original bam-
 The script 'BAM_microsats_getscores.sh' discard reads with a truncated microsatellite and subsequently determines repeat lengths in the retained reads. The output is stored in a file called 'mymicrosat.reads.all_loci.txt'. This file lists for each sample and for each locus the number of reads observed for a given repeat length (default range: 1 to 40). 
 
 ![alt text](https://github.com/mennodejong1986/MicrosatelliteGenotypingFromBam/blob/main/Microsatellite_genotyping_step3.png)
-***Figure 1. Microsatellite scoring.*** *Reads with microsatellites*
+***Figure 1. Microsatellite scoring.*** *Above: reads overlapping with a tetranucleotide microsatellite with the repeat ATCT. All occurrences of the repeat 'ATCT' are highlighted in red. Below: single and double repeats have been replaced with KKKK and KKKKKKKK respectively, strings consisting of three or more repeats have been replaced with an underscore, and reads with truncated strings have been discarded. Allele counts can be obtained by counting for each read the number of underscores and by dividing this number by the period length (4). For this particular locus and individual, the combined read depth is 12.* 
 
 ## Step 4. Genotype calling
 
