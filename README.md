@@ -30,7 +30,9 @@ Microsatellites in a reference genome can be detected using the software TRFfind
 
 The -h flag is needed to surpress output files we do not need (which otherwise will overload your directory).
 
-The output file will be named 'mygenome.fa.2.7.7.80.10.50.6.dat.' To select microsatellites tetranucleotide microsatellites with a repeat length of 7 to 9 units and an alignment score of 100, and to store the information for these loci in BED-format, run the script 'FASTA_findmicrosats_TRFoutput2BED.sh'. (You are free to edit the script if you want to select loci with different period and/or repeat lengths. Keep in mind, though, that read length imposes an upper limit to the length of microsatellites which can be reliably genotyped, and also consider that tetranucleotides can be more reliably genotyped than dinucleotides (step 3)).
+The output file will be named 'mygenome.fa.2.7.7.80.10.50.6.dat.' To select microsatellites tetranucleotide microsatellites with a repeat length of 7 to 9 units and an alignment score of 100, and to store the information for these loci in BED-format, run the script 'FASTA_findmicrosats_TRFoutput2BED.sh'. 
+
+You are free to edit the script if you want to select loci with different period and/or repeat lengths. Keep in mind, though, that read length imposes an upper limit to the length of microsatellites which can be reliably genotyped, and also consider that tetranucleotides can be more reliably genotyped than dinucleotides (see step 3).
 
 ## Step 2. Extract selected microsatellites from genomes 
 
