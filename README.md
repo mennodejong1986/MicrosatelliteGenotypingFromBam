@@ -26,7 +26,7 @@ Microsatellites in a reference genome can be detected using the software TRFfind
 
 Add -h flag to surpress output files we do not need.
 
-The ... script subsequently selects loci which the desired repeat length. 
+The 'BAM_microsats_select.sh' script subsequently selects loci which the desired repeat length. 
 
 ## Step 2. Extract selected microsatellites from genomes 
 
