@@ -6,7 +6,7 @@ However, instead of extracting SNP data from the information stored in bam-files
 
 If you use this pipeline for your own research, please cite:
 
-*de Jong, M.J., et al. Range-wide whole-genome resequencing of the brown bear reveals drivers of intraspecies divergence. Commun Biol 6, 153 (2023). https://doi.org/10.1038/s42003-023-04514-w*
+*De Jong et al., 2023, Range-wide whole-genome resequencing of the brown bear reveals drivers of intraspecies divergence. Commun Biol 6, 153. https://doi.org/10.1038/s42003-023-04514-w*
 
 ## Workflow overview
 
