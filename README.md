@@ -43,14 +43,14 @@ The script will generate new bam-files with the same prefix as the original bam-
 
 ## Step 3. Allele scoring
 
-The Unix script 'BAM_microsats_getscores.sh' discard reads with a truncated microsatellite and subsequently determines repeat lengths in the retained reads. The output is stored in a file called 'mymicrosat.reads.all_loci.txt'. This file lists for each sample and for each locus the number of reads observed for a given repeat length (default range: 1 to 40). 
+The Unix script 'BAM_microsats_getscores.sh' discard reads with a truncated microsatellite and subsequently determines repeat lengths in the retained reads. The output is stored in a file called 'mymicrosats.scores.all_loci.txt'. This file lists for each sample and for each locus the number of reads observed for a given repeat length (default range: 1 to 40). 
 
 ![alt text](https://github.com/mennodejong1986/MicrosatelliteGenotypingFromBam/blob/main/Microsatellite_genotyping_step3.png)
 ***Figure 1. Microsatellite scoring.*** *Above: reads overlapping with a tetranucleotide microsatellite with the repeat ATCT. All occurrences of the repeat 'ATCT' are highlighted in red. Below: single and double repeats have been replaced with KKKK and KKKKKKKK respectively, strings consisting of three or more repeats have been replaced with an underscore, and reads with truncated strings have been discarded. Allele counts can be obtained by counting for each read the number of underscores and by dividing this number by the period length (4). For this particular locus and individual, the combined read depth is 12.* 
 
 ## Step 4. Genotype calling
 
-The R script 'BAM_microsats_genotyping.inR.txt' reads the data stored in the file 'mymicrosat.reads.all_loci.txt' (created in the previous step), and infers genotypes using a simple set of (admittedly arbitrary) rules. Specifically, alleles with a read depth below three were assumed to be 'genotyping errors' (or 'stutter alleles', if you like). In cases where more than two alleles remained, the two best supported alleles (highest read depths) were chosen. In cases where the second and third option alleles were supported by equal amounts of reads, the locus was scored homozygous for the best supported allele.
+The R script 'BAM_microsats_genotyping.inR.txt' reads the data stored in the file 'mymicrosats.scores.all_loci.txt' (created in the previous step), and infers genotypes using a simple set of (admittedly arbitrary) rules. Specifically, alleles with a read depth below three were assumed to be 'genotyping errors' (or 'stutter alleles', if you like). In cases where more than two alleles remained, the two best supported alleles (highest read depths) were chosen. In cases where the second and third option alleles were supported by equal amounts of reads, the locus was scored homozygous for the best supported allele.
 
 The genotype data will be stored in a structure file called 'mymicrosats.stru'.
 
