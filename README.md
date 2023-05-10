@@ -4,6 +4,9 @@ With the advent of next generation sequencing, SNPs (single nucleotide polymorph
 
 However, instead of extracting SNP data from the information stored in bam-files, why not extract microsatellite data? Given the relatively high mutation rate and allelic richness of microsatellites, one could even argue that microsatellites are a more informative genetic marker than biallelic SNPs. While traditional microsatellite studies are based on a limited number of markers (typically less than 30), whole genome resequencing data potentially contains information for many thousands of microsatellites.   
 
+If you use this pipeline for your own research, please cite:
+*de Jong, M.J., et al. Range-wide whole-genome resequencing of the brown bear reveals drivers of intraspecies divergence. Commun Biol 6, 153 (2023). https://doi.org/10.1038/s42003-023-04514-w*
+
 ## Workflow overview
 
 The pipeline presented here extracts microsatellite data from input bam-files. The prerequisite is that the short read data has been mapped against a reference genome which has not been masked for repetitive genomes. Furthermore, the sequencing data should at least be 10x (preferably 20x or more), and the read lengths preferably not shorter than 150 bp.
