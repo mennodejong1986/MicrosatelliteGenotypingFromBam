@@ -53,7 +53,7 @@ The Unix script 'BAM_microsats_getscores.sh' discard reads with a truncated micr
 The R script 'BAM_microsats_genotyping.inR.txt' reads the data stored in the file 'mymicrosat.reads.all_loci.txt' (created in the previous step), and infers genotypes using a simple set of (admittedly arbitrary) rules. Specifically, alleles with a read depth below three were assumed to be 'genotyping errors' (or 'stutter alleles', if you like). In cases where more than two alleles remained, the two best supported alleles (highest read depths) were chosen. In cases where the second and third option alleles were supported by equal amounts of reads, the locus was scored homozygous for the best supported allele.
 
 ![alt text](https://github.com/mennodejong1986/MicrosatelliteGenotypingFromBam/blob/main/Microsatellite_genotyping_step4.png)
-***Figure 2. Allelic depths.*** *Shown are allelic depths for a randomly chosen locus and a random subset of individuals.* 
+***Figure 2. Allelic depths.*** *Shown are allelic depths for a randomly chosen locus and a random subset of individuals. For instance, for individual ABC12 (topleft) there are 3 reads suggesting a repeat length of 10, and 3 reads suggesting a repeat length of 11. This individual will be genotyped as heterozygous 10/11. For individual ABC13 (below ABC12) there are 10 reads suggesting a repeat length of 7. This individual will be genotyped as homozygous 7/7.* 
 
 
 ## Step 5. Data quality filtering and analyses
