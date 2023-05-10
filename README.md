@@ -6,7 +6,7 @@ However, instead of extracting SNP data from the information stored in bam-files
 
 ## Workflow overview
 
-The pipeline presented here extracts microsatellite data from input bam-files. The prerequisite is that the short read data has been mapped against a reference genome which has not been masked for repetitive genomes. Furthermore, the sequencing data should at least be 10x (preferably 15x or more), and the read lengths preferably not shorter than 150 bp.
+The pipeline presented here extracts microsatellite data from input bam-files. The prerequisite is that the short read data has been mapped against a reference genome which has not been masked for repetitive genomes. Furthermore, the sequencing data should at least be 10x (preferably 20x or more), and the read lengths preferably not shorter than 150 bp.
 
 The procedure to produce a microsatellite data set from bam-files involves computer work only (not wet lab stuff), and consists of the following five steps:
 
@@ -16,7 +16,7 @@ The procedure to produce a microsatellite data set from bam-files involves compu
 4. genotype calling: convert count data into genotypes using a decision tree
 5. data quality filtering: filter individuals and loci on levels of missing data  
 
-Albeit entirely computer-based, in a way each step of this pipeline resembles steps in the traditional wet-lab protocol of a microsatellite study, namely: 1.) primer design, 2.) target-specific DNA-amplification through PCR, 3.) allele scoring through capillary electrophoresis, 4.) genotype calling using a decision tree (e.g., distinguishing true signals from stutter alleles and null alleles), and .5) data quality filtering.     
+Albeit entirely computer-based, in a way each step of this pipeline resembles steps in the traditional wet-lab protocol of a microsatellite study, namely: 1.) primer selection/design, 2.) target-specific DNA-amplification through PCR, 3.) allele scoring through capillary electrophoresis, 4.) genotype calling using a decision tree, and .5) data quality filtering.     
 
 ## Step 1. Select a set of microsatellite loci
 
