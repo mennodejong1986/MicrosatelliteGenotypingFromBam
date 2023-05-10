@@ -2,10 +2,12 @@
 # This script is to extract regions from a bamfile
 # the region(s) should be defined in a bed file
 
-MYBED=all29microsats.bed
+#########################
+MYBED=allmicrosats.bed
+MYBAMFILES=mybamfiles.txt
+#########################
 
-
-for file in $(cat mybamfiles.subsetad)
+for file in $(cat $MYBAMFILES)
  do
  bn=$(echo $file | rev | cut -d "/" -f1 | rev | sed 's/.sorted.RG.dupremoved.filtered.bam//g')
  mypath=$(echo $file | rev | cut -d "/" -f2- | rev)
