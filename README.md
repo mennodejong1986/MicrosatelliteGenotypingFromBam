@@ -43,7 +43,7 @@ The script will generate new bam-files with the same prefix as the original bam-
 
 ## Step 3. Allele scoring
 
-The script 'BAM_microsats_getscores.sh' extracts from each bam-file and from each locus the 
+The script 'BAM_microsats_getscores.sh' discard reads with a truncated microsatellite and subsequently determines repeat lengths in the retained reads. The output is stored in a file called 'mymicrosat.reads.all_loci.txt'. This file lists for each sample and for each locus the number of reads observed for a given repeat length (default range: 1 to 40). 
 
 ![alt text](https://github.com/mennodejong1986/MicrosatelliteGenotypingFromBam/blob/main/Microsatellite_genotyping_step3.png)
 ***Figure 1. Microsatellite scoring.*** *Reads with microsatellites*
